@@ -12,6 +12,16 @@ variable "ami_prefix" {
   default = "AMI-BUILD"
 }
 
+variable "bldeploy" {
+  type    = string
+  default = "blue"
+}
+
+variable "grdeploy" {
+  type    = string
+  default = "green"
+}
+
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
@@ -45,7 +55,8 @@ build {
     "source.amazon-ebs.Blue",
   ]
   provisioner "ansible" {
-    playbook_file   = "./playbooks/bluewebserver.yml"
+    playbook_file   = "./playbooks/webserver.yml"
+    extra_arguments = ["--extra-vars", "color=${var.bldeploy}"]
   
   }
 }
@@ -76,6 +87,7 @@ build {
     "source.amazon-ebs.Green"
   ]
   provisioner "ansible" {
-    playbook_file   = "./playbooks/greenwebserver.yml"
+    playbook_file   = "./playbooks/webserver.yml"
+    extra_arguments = ["--extra-vars", "color=${var.grdeploy}"]
   }
 }
